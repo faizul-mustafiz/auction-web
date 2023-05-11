@@ -1,0 +1,12 @@
+.container{
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    align-content: baseline;
+    justify-content: space-evenly;
+    column-gap: 30px;
+}
+
+.item-list {
+    padding-top: 1em;
+}

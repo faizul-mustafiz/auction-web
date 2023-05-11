@@ -2,11 +2,13 @@ import axios from 'axios';
 import {
   getAccessToken,
   getRefreshToken,
+  setAccessToken,
+  setRefreshToken,
   isLoggedIn,
 } from '../utility/auth.utility';
 import { InternalAxiosRequestConfig } from 'axios';
 
-interface RequestObject extends InternalAxiosRequestConfig {
+interface RequestConfig extends InternalAxiosRequestConfig {
   [key: string]: any;
 }
 
@@ -22,7 +24,7 @@ const RequestInterceptor = axios.create({
 });
 
 RequestInterceptor.interceptors.request.use(
-  (config: RequestObject) => {
+  (config: RequestConfig) => {
     if (isLoggedIn()) {
       config.headers.Authorization = `Bearer ${getAccessToken()}`;
     }
@@ -51,14 +53,8 @@ RequestInterceptor.interceptors.response.use(
         await axios
           .post(`${baseUrl}/auth/refresh`, {}, bearerRefreshAuthorizationHeader)
           .then((tokenRefreshResponse: any) => {
-            sessionStorage.setItem(
-              'accessToken',
-              tokenRefreshResponse.data.result.accessToken,
-            );
-            sessionStorage.setItem(
-              'refreshToken',
-              tokenRefreshResponse.data.result.refreshToken,
-            );
+            setAccessToken(tokenRefreshResponse.data.result.accessToken);
+            setRefreshToken(tokenRefreshResponse.data.result.refreshToken);
             window.location.reload();
           })
           .catch((error: any) => {
@@ -66,6 +62,7 @@ RequestInterceptor.interceptors.response.use(
               error.response.request.responseURL === `${baseUrl}/auth/refresh`
             ) {
               sessionStorage.clear();
+              localStorage.clear();
               window.location.reload();
             }
           });
