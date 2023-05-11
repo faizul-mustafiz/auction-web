@@ -25,7 +25,13 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "dev": "cross-env PORT=3000 env-cmd -f ./environments/.env.dev react-scripts start",
+    "stage": "cross-env PORT=3000 env-cmd -f ./environments/.env.stage react-scripts start",
+    "prod": "cross-env PORT=3000 env-cmd -f ./environments/.env.prod react-scripts start",
     "build": "react-scripts build",
+    "build-dev": "cross-env env-cmd -f ./environments/.env.dev react-scripts build",
+    "build-stage": "cross-env env-cmd -f ./environments/.env.stage react-scripts build",
+    "build-prod": "cross-env env-cmd -f ./environments/.env.prod react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -48,6 +54,8 @@
     ]
   },
   "devDependencies": {
+    "@types/seamless-immutable": "^7.1.16",
+    "cross-env": "^7.0.3",
     "prettier": "^2.8.8"
   }
 }
