@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import './App.css';
 import PrivateRoute from '../components/PrivateRoute';
 
@@ -10,9 +10,9 @@ import {
 
 import {BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-const LoginPage = lazy(()=> import('../components/AuthenticationFeature/LoginPage'));
-const RegistrationPage = lazy(()=> import('../components/AuthenticationFeature/RegistrationPage'));
-const ItemsPage = lazy(()=> import('../components/BiddingFeature/ItemsPage'))
+const LoginPage = lazy(()=> import('../components/Authentication/LoginPage'));
+const RegistrationPage = lazy(()=> import('../components/Authentication/RegistrationPage'));
+const ItemsPage = lazy(()=> import('../components/Bidding/ItemsPage'))
 
 function App() {
   return (
