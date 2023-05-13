@@ -15,7 +15,7 @@ export interface ItemListProps {
 const ItemList: FC<ItemListProps> = (props: ItemListProps) => {
   const { items } = props;
   return (
-    <TableContainer component={Paper}>
+    <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="items table">
         <TableHead>
           <TableRow>

@@ -5,6 +5,10 @@ import itemStatus, {
   ItemStatusState,
   reducerName as ItemStatusReducer,
 } from './ducks/itemStatus';
+import feature, {
+  FeatureState,
+  reducerName as FeatureReducer,
+} from './ducks/feature';
 
 // reducers
 /** Initial reducers in the reducer registry */
@@ -14,10 +18,11 @@ const defaultReducers: any = {};
 /** Add counter reducer to registry */
 defaultReducers[ItemsReducer] = items;
 defaultReducers[ItemStatusReducer] = itemStatus;
+defaultReducers[FeatureReducer] = feature;
 
 const rootReducer = combineReducers(defaultReducers);
 
-export type StoreType = Store & ItemsState & ItemStatusState;
+export type StoreType = Store & ItemsState & ItemStatusState & FeatureState;
 
 /** The initial store */
 const store: StoreType = createStore(rootReducer, composeWithDevTools());
