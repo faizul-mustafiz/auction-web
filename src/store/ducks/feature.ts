@@ -11,7 +11,7 @@ export interface SetFeatureAction extends AnyAction {
 }
 export type ListTableActionTypes = SetFeatureAction;
 
-export const SetFeature = (feature: string): SetFeatureAction => ({
+export const setFeature = (feature: string): SetFeatureAction => ({
   feature,
   type: SET_FEATURE,
 });

@@ -10,6 +10,8 @@ import feature, {
   reducerName as FeatureReducer,
 } from './ducks/feature';
 
+import user, { UserState, reducerName as UserReducer } from './ducks/user';
+
 // reducers
 /** Initial reducers in the reducer registry */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,10 +21,15 @@ const defaultReducers: any = {};
 defaultReducers[ItemsReducer] = items;
 defaultReducers[ItemStatusReducer] = itemStatus;
 defaultReducers[FeatureReducer] = feature;
+defaultReducers[UserReducer] = user;
 
 const rootReducer = combineReducers(defaultReducers);
 
-export type StoreType = Store & ItemsState & ItemStatusState & FeatureState;
+export type StoreType = Store &
+  ItemsState &
+  ItemStatusState &
+  FeatureState &
+  UserState;
 
 /** The initial store */
 const store: StoreType = createStore(rootReducer, composeWithDevTools());

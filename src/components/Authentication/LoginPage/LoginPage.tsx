@@ -18,8 +18,14 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { signIn, verify } from '../../../services/AuthService';
 import { useNavigate } from 'react-router-dom';
-import { isLoggedIn, setAccessToken } from '../../../utility/auth.utility';
+import {
+  isLoggedIn,
+  setAccessToken,
+  setUserId,
+} from '../../../utility/auth.utility';
 import { setRefreshToken } from '../../../utility/auth.utility';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../../store/ducks/user';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -30,6 +36,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
 const LoginPage: FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -64,6 +71,13 @@ const LoginPage: FC = () => {
       if (verifyResponse.success) {
         setAccessToken(verifyResponse.result.accessToken);
         setRefreshToken(verifyResponse.result.refreshToken);
+        setUserId(verifyResponse.result._id);
+        dispatch(
+          setUser({
+            email: verifyResponse.result.email,
+            balance: verifyResponse.result.balance || 0,
+          }),
+        );
         navigate('/');
       } else {
         setShouldShowAlert(true);

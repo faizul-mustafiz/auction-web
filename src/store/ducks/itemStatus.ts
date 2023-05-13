@@ -11,7 +11,7 @@ export interface SetItemStatusAction extends AnyAction {
 }
 export type ListTableActionTypes = SetItemStatusAction;
 
-export const SetItemStatus = (itemStatus: string): SetItemStatusAction => ({
+export const setItemStatus = (itemStatus: string): SetItemStatusAction => ({
   itemStatus,
   type: SET_ITEM_STATUS,
 });
