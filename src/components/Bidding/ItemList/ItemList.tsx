@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import { ItemActionButton } from '../ItemActionButton';
 export interface ItemListProps {
   items: any[];
 }
@@ -38,7 +39,7 @@ const ItemList: FC<ItemListProps> = (props: ItemListProps) => {
               <TableCell align="right">{item.duration}</TableCell>
               <TableCell align="right">{item.status}</TableCell>
               <TableCell align="right">
-                <Button variant="outlined">Bid</Button>
+                <ItemActionButton item={item} />
               </TableCell>
             </TableRow>
           ))}

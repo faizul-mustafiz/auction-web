@@ -1,10 +1,13 @@
 import { FC, forwardRef, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import { Button, Grid, Snackbar, Stack } from '@mui/material';
-import RequestInterceptor from '../../../services/RequestInterceptor';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import { deposit } from '../../../services/UserService';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../../store/ducks/user';
+
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref,
@@ -13,34 +16,41 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 const DepositPage: FC = () => {
+  const dispatch = useDispatch();
   const [amount, setAmount] = useState('');
   const [shouldShowAlert, setShouldShowAlert] = useState(false);
-  const [isErrorResponse, setIsErrorResponse] = useState(false);
+  const [isSuccessResponse, setIsSuccessResponse] = useState(true);
   const [responseMessage, setResponseMessage] = useState('');
+
   const handleAmountChange = (value: string) => {
     setAmount(value);
   };
+
   const isEnabled = amount.length > 0 || false;
+
   const handleResetClick = () => {
     setAmount('');
   };
-  const handleDepositClick = () => {
+
+  const handleDepositClick = async () => {
     const depositRequestBody = {
       amount: Number(amount),
     };
-    RequestInterceptor.post('/users/deposit', depositRequestBody).then(
-      (response: any) => {
-        if (response && response.data.success) {
-          setIsErrorResponse(false);
-        } else {
-          setIsErrorResponse(true);
-        }
-        setShouldShowAlert(true);
-        setResponseMessage(response.data.message);
-        handleResetClick();
-      },
-    );
+    const depositResponse = await deposit(depositRequestBody);
+    if (depositResponse) {
+      setShouldShowAlert(true);
+      setIsSuccessResponse(depositResponse.success);
+      setResponseMessage(depositResponse.message);
+      dispatch(
+        setUser({
+          email: depositResponse.result.email,
+          balance: depositResponse.result.balance || 0,
+        }),
+      );
+      handleResetClick();
+    }
   };
+
   /**
    * * Response success and error response alert related methods
    */
@@ -51,9 +61,24 @@ const DepositPage: FC = () => {
     if (reason === 'clickaway') {
       return;
     }
-    setIsErrorResponse(false);
     setShouldShowAlert(false);
   };
+
+  const AlertSnackBar = (
+    <Snackbar
+      open={shouldShowAlert}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      autoHideDuration={3000}
+      onClose={handleResponseMessageClose}>
+      <Alert
+        onClose={handleResponseMessageClose}
+        severity={isSuccessResponse ? 'success' : 'error'}
+        sx={{ width: '100%' }}>
+        {responseMessage}
+      </Alert>
+    </Snackbar>
+  );
+
   return (
     <div className="container">
       <Card variant="outlined">
@@ -91,18 +116,7 @@ const DepositPage: FC = () => {
           </Grid>
         </CardContent>
       </Card>
-      <Snackbar
-        open={shouldShowAlert}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        autoHideDuration={5000}
-        onClose={handleResponseMessageClose}>
-        <Alert
-          onClose={handleResponseMessageClose}
-          severity={isErrorResponse ? 'error' : 'success'}
-          sx={{ width: '100%' }}>
-          {responseMessage}
-        </Alert>
-      </Snackbar>
+      {AlertSnackBar}
     </div>
   );
 };

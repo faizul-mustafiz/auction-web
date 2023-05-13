@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MailIcon from '@mui/icons-material/Mail';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
@@ -15,16 +14,17 @@ import { ItemStatus } from '../../../enums/ItemStatus.enum';
 import { setFeature, getFeature } from '../../../store/ducks/feature';
 import { Feature } from '../../../enums/feature.enum';
 import { signOut } from '../../../services/AuthService';
-import { clearStorageData, getUserId } from '../../../utility/auth.utility';
+import { clearStorageData } from '../../../utility/auth.utility';
 import { useNavigate } from 'react-router-dom';
-import { getUser } from '../../../store/ducks/user';
-import { getUserInfo } from '../../../services/UserService';
+import { getUser, setUser } from '../../../store/ducks/user';
+import { setItems } from '../../../store/ducks/items';
 
 const MenuBar: FC = () => {
   const dispatch = useDispatch();
   const feature = useSelector(getFeature);
   const user = useSelector(getUser);
   const navigate = useNavigate();
+
   let headerTag = '';
   switch (feature) {
     case Feature.items:
@@ -69,9 +69,14 @@ const MenuBar: FC = () => {
     const signOutResponse = await signOut();
     if (signOutResponse.success) {
       clearStorageData();
+      clearReduxData();
       navigate('/login');
     }
     handleClose();
+  };
+  const clearReduxData = () => {
+    dispatch(setFeature(Feature.items));
+    dispatch(setItemStatus(ItemStatus.draft));
   };
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -95,7 +100,7 @@ const MenuBar: FC = () => {
                 username: {user.email}
               </Typography>
               <Typography variant="h6" component="span" sx={{ marginRight: 2 }}>
-                balance: {user.balance}$
+                balance: {user.balance || 0}$
               </Typography>
               <IconButton
                 size="large"

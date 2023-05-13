@@ -1,10 +1,10 @@
 import { FC, forwardRef, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import { Button, Grid, Snackbar, Stack } from '@mui/material';
-import RequestInterceptor from '../../../services/RequestInterceptor';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import { createItem } from '../../../services/ItemService';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -18,45 +18,46 @@ const NewItemPage: FC = () => {
   const [startPrice, setStartPrice] = useState('');
   const [timeWindow, setTimeWindow] = useState('');
   const [shouldShowAlert, setShouldShowAlert] = useState(false);
-  const [isErrorResponse, setIsErrorResponse] = useState(false);
+  const [isSuccessResponse, setIsSuccessResponse] = useState(true);
   const [responseMessage, setResponseMessage] = useState('');
 
   const handleNameChange = (value: string) => {
     setName(value);
   };
+
   const handleStartPriceChange = (value: string) => {
     setStartPrice(value);
   };
+
   const handleTimeWindowChange = (value: string) => {
     setTimeWindow(value);
   };
+
   const isEnabled =
     (name.length > 0 && startPrice.length > 0 && timeWindow.length > 0) ||
     false;
+
   const handleResetClick = () => {
     setName('');
     setStartPrice('');
     setTimeWindow('');
   };
-  const handleCreateItemClick = () => {
+
+  const handleCreateItemClick = async () => {
     const newItemRequestBody = {
       name: name,
       startingPrice: Number(startPrice),
       duration: Number(timeWindow),
     };
-    RequestInterceptor.post('/items', newItemRequestBody).then(
-      (response: any) => {
-        if (response && response.data.success) {
-          setIsErrorResponse(false);
-        } else {
-          setIsErrorResponse(true);
-        }
-        setShouldShowAlert(true);
-        setResponseMessage(response.data.message);
-        handleResetClick();
-      },
-    );
+    const createItemResponse = await createItem(newItemRequestBody);
+    if (createItemResponse) {
+      setShouldShowAlert(true);
+      setIsSuccessResponse(createItemResponse.success);
+      setResponseMessage(createItemResponse.message);
+      handleResetClick();
+    }
   };
+
   /**
    * * Response success and error response alert related methods
    */
@@ -67,9 +68,24 @@ const NewItemPage: FC = () => {
     if (reason === 'clickaway') {
       return;
     }
-    setIsErrorResponse(false);
     setShouldShowAlert(false);
   };
+
+  const AlertSnackBar = (
+    <Snackbar
+      open={shouldShowAlert}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      autoHideDuration={5000}
+      onClose={handleResponseMessageClose}>
+      <Alert
+        onClose={handleResponseMessageClose}
+        severity={isSuccessResponse ? 'success' : 'error'}
+        sx={{ width: '100%' }}>
+        {responseMessage}
+      </Alert>
+    </Snackbar>
+  );
+
   return (
     <div className="container">
       <Card variant="outlined">
@@ -131,18 +147,7 @@ const NewItemPage: FC = () => {
           </Grid>
         </CardContent>
       </Card>
-      <Snackbar
-        open={shouldShowAlert}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        autoHideDuration={5000}
-        onClose={handleResponseMessageClose}>
-        <Alert
-          onClose={handleResponseMessageClose}
-          severity={isErrorResponse ? 'error' : 'success'}
-          sx={{ width: '100%' }}>
-          {responseMessage}
-        </Alert>
-      </Snackbar>
+      {AlertSnackBar}
     </div>
   );
 };
