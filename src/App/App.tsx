@@ -9,6 +9,8 @@ import {
 } from '../configs/endpoints';
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 
 const LoginPage = lazy(() => import('../components/Authentication/LoginPage'));
 
@@ -21,7 +23,7 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<CircularProgress />}>
           <Routes>
             <Route
               path={HomeEndpoint}
