@@ -23,7 +23,6 @@ const ItemList: FC<ItemListProps> = (props: ItemListProps) => {
             <TableCell>Name</TableCell>
             <TableCell align="right">Starting Price</TableCell>
             <TableCell align="right">Time Window(hour)</TableCell>
-            <TableCell align="right">Status</TableCell>
             <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
@@ -37,7 +36,6 @@ const ItemList: FC<ItemListProps> = (props: ItemListProps) => {
               </TableCell>
               <TableCell align="right">{item.startingPrice}</TableCell>
               <TableCell align="right">{item.duration}</TableCell>
-              <TableCell align="right">{item.status}</TableCell>
               <TableCell align="right">
                 <ItemActionButton item={item} />
               </TableCell>

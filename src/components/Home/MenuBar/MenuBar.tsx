@@ -9,7 +9,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useDispatch, useSelector } from 'react-redux';
-import { setItemStatus } from '../../../store/ducks/itemStatus';
+import { getItemStatus, setItemStatus } from '../../../store/ducks/itemStatus';
 import { ItemStatus } from '../../../enums/ItemStatus.enum';
 import { setFeature, getFeature } from '../../../store/ducks/feature';
 import { Feature } from '../../../enums/feature.enum';
@@ -22,13 +22,20 @@ import { setItems } from '../../../store/ducks/items';
 const MenuBar: FC = () => {
   const dispatch = useDispatch();
   const feature = useSelector(getFeature);
+  const itemStatus = useSelector(getItemStatus);
   const user = useSelector(getUser);
   const navigate = useNavigate();
 
   let headerTag = '';
   switch (feature) {
     case Feature.items:
-      headerTag = 'Items';
+      if (itemStatus === ItemStatus.draft) {
+        headerTag = 'Items';
+      } else if (itemStatus === ItemStatus.ongoing) {
+        headerTag = 'Ongoing Items';
+      } else if (itemStatus === ItemStatus.completed) {
+        headerTag = 'Completed Items';
+      }
       break;
     case Feature.newItem:
       headerTag = 'Create New Item';
@@ -80,7 +87,7 @@ const MenuBar: FC = () => {
   };
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" color="default">
         <Toolbar>
           <IconButton
             onClick={handleHomeToolBarButtonClick}

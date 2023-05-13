@@ -10,7 +10,6 @@ import {
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 
 const LoginPage = lazy(() => import('../components/Authentication/LoginPage'));
 
