@@ -32,10 +32,10 @@ export const searchItem = async (status: string) => {
   }
 };
 
-export const bidItem = async (itemId: string, bidAmount: number) => {
+export const bidItem = async (payload: any) => {
   try {
-    const response = await RequestInterceptor.post(`/bid/${itemId}`, {
-      bid: bidAmount,
+    const response = await RequestInterceptor.post(`/bid/${payload.id}`, {
+      bid: payload.bid,
     });
     console.log('bidItem-response', response);
     return Promise.resolve(response?.data);

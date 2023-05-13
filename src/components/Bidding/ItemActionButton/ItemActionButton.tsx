@@ -2,13 +2,24 @@ import { FC, forwardRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getItemStatus } from '../../../store/ducks/itemStatus';
 import { ItemStatus } from '../../../enums/ItemStatus.enum';
-import { Button, Snackbar } from '@mui/material';
 import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Snackbar,
+  TextField,
+} from '@mui/material';
+import {
+  bidItem,
   deleteItem,
   publishItem,
   searchItem,
 } from '../../../services/ItemService';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 import { setItems } from '../../../store/ducks/items';
 
 export interface ItemProps {
@@ -26,12 +37,21 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
   const { item } = props;
   const itemStatus = useSelector(getItemStatus);
   const dispatch = useDispatch();
+  /**
+   * * response success and error response alert related state variables
+   */
   const [shouldShowAlert, setShouldShowAlert] = useState(false);
   const [isSuccessResponse, setIsSuccessResponse] = useState(true);
   const [responseMessage, setResponseMessage] = useState('');
-
+  /**
+   * * bid dialog and bid feature related state variables
+   */
+  const [shouldShowBidDialog, setShouldShowBidDialog] = useState(false);
+  const [bid, setBid] = useState('');
+  /**
+   * * publish button click event handler
+   */
   const handlePublishButtonClick = async () => {
-    console.log('handlePublishButtonClick', item);
     const publishItemResponse = await publishItem(item._id);
     if (publishItemResponse) {
       setShouldShowAlert(true);
@@ -43,13 +63,28 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
       }
     }
   };
-  const handleBidButtonClick = () => {
+  /**
+   * * bid item button click event handler
+   */
+  const handleBidButtonClick = async () => {
+    const bidItemPayload = {
+      id: item._id,
+      bid: Number(bid),
+    };
     console.log('handleBidButtonClick', item);
+    const bidItemResponse = await bidItem(bidItemPayload);
+    if (bidItemResponse) {
+      setShouldShowAlert(true);
+      setIsSuccessResponse(bidItemResponse.success);
+      setResponseMessage(bidItemResponse.message);
+      setShouldShowBidDialog(false);
+    }
   };
+  /**
+   * * delete button click event handler
+   */
   const handleDeleteButtonClick = async () => {
-    console.log('handleDeleteButtonClick', item);
     const deleteItemResponse = await deleteItem(item._id);
-    console.log('deleteItemResponse', deleteItemResponse);
     if (deleteItemResponse) {
       setShouldShowAlert(true);
       setIsSuccessResponse(deleteItemResponse.success);
@@ -61,7 +96,21 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
     }
   };
   /**
-   * * Response success and error response alert related methods
+   * * bid dialog open button click handler
+   */
+  const handleBidDialogOpen = () => {
+    setShouldShowBidDialog(true);
+  };
+  const handleBidDialogClose = () => {
+    setShouldShowBidDialog(false);
+  };
+  const handleBidChange = (value: string) => {
+    setBid(value);
+  };
+
+  const isEnabled = bid.length > 0;
+  /**
+   * * response success and error response alert related methods
    */
   const handleResponseMessageClose = (
     event?: React.SyntheticEvent | Event,
@@ -88,6 +137,34 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
     </Snackbar>
   );
 
+  const BidDialog = (
+    <Dialog fullWidth open={shouldShowBidDialog} onClose={handleBidDialogClose}>
+      <DialogTitle sx={{ fontSize: 32 }}>{item.name}</DialogTitle>
+      <DialogContent>
+        <DialogContentText sx={{ paddingBottom: 2 }}>
+          Starting Price: {item.startingPrice}$
+        </DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="bid"
+          label="Bid Price ($)"
+          type="number"
+          fullWidth
+          variant="standard"
+          value={bid}
+          onChange={e => handleBidChange(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleBidDialogClose}>Cancel</Button>
+        <Button disabled={!isEnabled} onClick={handleBidButtonClick}>
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
   switch (itemStatus) {
     case ItemStatus.draft:
       return (
@@ -99,6 +176,19 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
             Publish
           </Button>
           {AlertSnackBar}
+        </div>
+      );
+    case ItemStatus.ongoing:
+      return (
+        <div>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleBidDialogOpen}>
+            Bid
+          </Button>
+          {AlertSnackBar}
+          {BidDialog}
         </div>
       );
     case ItemStatus.completed:
@@ -113,30 +203,8 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
           {AlertSnackBar}
         </div>
       );
-    case ItemStatus.ongoing:
-      return (
-        <div>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={handleBidButtonClick}>
-            Bid
-          </Button>
-          {AlertSnackBar}
-        </div>
-      );
     default:
-      return (
-        <div>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={handleBidButtonClick}>
-            Bid
-          </Button>
-          {AlertSnackBar}
-        </div>
-      );
+      return <CircularProgress />;
   }
 };
 export default ItemActionButton;
