@@ -9,7 +9,6 @@ import CardContent from '@mui/material/CardContent';
 
 export default function ItemsPage() {
   const itemStatus = useSelector(getItemStatus);
-  console.log('ItemsPage-itemStatus', itemStatus);
   const dispatch = useDispatch();
   const handleOngoingClick = () => {
     dispatch(SetItemStatus(ItemStatus.ongoing));

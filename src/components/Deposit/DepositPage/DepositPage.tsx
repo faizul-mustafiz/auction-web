@@ -30,7 +30,6 @@ const DepositPage: FC = () => {
     };
     RequestInterceptor.post('/users/deposit', depositRequestBody).then(
       (response: any) => {
-        console.log('response', response);
         if (response && response.data.success) {
           setIsErrorResponse(false);
         } else {

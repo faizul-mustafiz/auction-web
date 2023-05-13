@@ -8,14 +8,11 @@ import { getItemStatus } from '../../../store/ducks/itemStatus';
 
 export default function Item() {
   const itemStatus = useSelector(getItemStatus);
-  console.log('itemStatus', itemStatus);
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log('Get items based on item status');
     if (itemStatus === ItemStatus.draft) {
       RequestInterceptor.get(`/items/search?status=${ItemStatus.draft}`).then(
         (response: any) => {
-          console.log('draft-items-get-response', response);
           if (response) {
             dispatch(setItems(response.data.result.items));
           }
@@ -24,7 +21,6 @@ export default function Item() {
     } else if (itemStatus === ItemStatus.ongoing) {
       RequestInterceptor.get(`/items/search?status=${ItemStatus.ongoing}`).then(
         (response: any) => {
-          console.log('ongoing-items-get-response', response);
           if (response) {
             dispatch(setItems(response.data.result.items));
             return response.data.result;
@@ -35,7 +31,6 @@ export default function Item() {
       RequestInterceptor.get(
         `/items/search?status=${ItemStatus.completed}`,
       ).then((response: any) => {
-        console.log('complete-items-get-response', response);
         if (response) {
           dispatch(setItems(response.data.result.items));
         }
