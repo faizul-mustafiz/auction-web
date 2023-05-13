@@ -5,6 +5,7 @@ import {
   setAccessToken,
   setRefreshToken,
   isLoggedIn,
+  clearStorageData,
 } from '../utility/auth.utility';
 import { InternalAxiosRequestConfig } from 'axios';
 
@@ -13,7 +14,6 @@ interface RequestConfig extends InternalAxiosRequestConfig {
 }
 
 const baseUrl = process.env.REACT_APP_AUCTION_SERVICE_BASE_URL;
-console.log('base-url', baseUrl);
 const RequestInterceptor = axios.create({
   baseURL: baseUrl,
   headers: {
@@ -28,7 +28,6 @@ RequestInterceptor.interceptors.request.use(
     if (isLoggedIn()) {
       config.headers.Authorization = `Bearer ${getAccessToken()}`;
     }
-    console.log('request config in interceptor', config);
     return config;
   },
   (error: Error) => {
@@ -61,8 +60,7 @@ RequestInterceptor.interceptors.response.use(
             if (
               error.response.request.responseURL === `${baseUrl}/auth/refresh`
             ) {
-              sessionStorage.clear();
-              localStorage.clear();
+              clearStorageData();
               window.location.reload();
             }
           });
