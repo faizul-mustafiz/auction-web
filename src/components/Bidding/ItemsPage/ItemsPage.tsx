@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { ItemStatus } from '../../../enums/ItemStatus.enum';
-import { SetItemStatus, getItemStatus } from '../../../store/ducks/itemStatus';
+import { setItemStatus, getItemStatus } from '../../../store/ducks/itemStatus';
 import { Button, Stack } from '@mui/material';
 import Item from '../Item/Item';
 import './ItemPage.css';
@@ -11,10 +11,10 @@ export default function ItemsPage() {
   const itemStatus = useSelector(getItemStatus);
   const dispatch = useDispatch();
   const handleOngoingClick = () => {
-    dispatch(SetItemStatus(ItemStatus.ongoing));
+    dispatch(setItemStatus(ItemStatus.ongoing));
   };
   const handleCompleteClick = () => {
-    dispatch(SetItemStatus(ItemStatus.completed));
+    dispatch(setItemStatus(ItemStatus.completed));
   };
   return (
     <div>

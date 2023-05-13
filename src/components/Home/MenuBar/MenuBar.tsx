@@ -10,17 +10,20 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useDispatch, useSelector } from 'react-redux';
-import { SetItemStatus } from '../../../store/ducks/itemStatus';
+import { setItemStatus } from '../../../store/ducks/itemStatus';
 import { ItemStatus } from '../../../enums/ItemStatus.enum';
-import { SetFeature, getFeature } from '../../../store/ducks/feature';
+import { setFeature, getFeature } from '../../../store/ducks/feature';
 import { Feature } from '../../../enums/feature.enum';
 import { signOut } from '../../../services/AuthService';
-import { clearStorageData } from '../../../utility/auth.utility';
+import { clearStorageData, getUserId } from '../../../utility/auth.utility';
 import { useNavigate } from 'react-router-dom';
+import { getUser } from '../../../store/ducks/user';
+import { getUserInfo } from '../../../services/UserService';
 
 const MenuBar: FC = () => {
   const dispatch = useDispatch();
   const feature = useSelector(getFeature);
+  const user = useSelector(getUser);
   const navigate = useNavigate();
   let headerTag = '';
   switch (feature) {
@@ -48,17 +51,17 @@ const MenuBar: FC = () => {
   };
 
   const handleHomeToolBarButtonClick = () => {
-    dispatch(SetFeature(Feature.items));
-    dispatch(SetItemStatus(ItemStatus.draft));
+    dispatch(setFeature(Feature.items));
+    dispatch(setItemStatus(ItemStatus.draft));
   };
 
   const handleCreateNewItemMenuBarButtonClick = () => {
-    dispatch(SetFeature(Feature.newItem));
+    dispatch(setFeature(Feature.newItem));
     handleClose();
   };
 
   const handleDepositMenuBarButtonClick = () => {
-    dispatch(SetFeature(Feature.deposit));
+    dispatch(setFeature(Feature.deposit));
     handleClose();
   };
 
@@ -70,7 +73,6 @@ const MenuBar: FC = () => {
     }
     handleClose();
   };
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -84,11 +86,17 @@ const MenuBar: FC = () => {
             sx={{ mr: 2 }}>
             <HomeIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="span" sx={{ flexGrow: 1 }}>
             {headerTag}
           </Typography>
           {
             <div>
+              <Typography variant="h6" component="span" sx={{ marginRight: 1 }}>
+                username: {user.email}
+              </Typography>
+              <Typography variant="h6" component="span" sx={{ marginRight: 2 }}>
+                balance: {user.balance}$
+              </Typography>
               <IconButton
                 size="large"
                 aria-label="account of current user"

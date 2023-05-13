@@ -4,11 +4,17 @@ export const setAccessToken = (accessToken: string): any => {
 export const setRefreshToken = (refreshToken: string): any => {
   return localStorage.setItem('refreshToken', refreshToken);
 };
+export const setUserId = (userId: string): any => {
+  return localStorage.setItem('userId', userId);
+};
 export const getAccessToken = (): any => {
   return localStorage.getItem('accessToken');
 };
 export const getRefreshToken = (): any => {
   return localStorage.getItem('refreshToken');
+};
+export const getUserId = (): any => {
+  return localStorage.getItem('userId');
 };
 export const clearStorageData = (): any => {
   localStorage.clear();
