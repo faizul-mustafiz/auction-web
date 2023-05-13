@@ -14,10 +14,14 @@ import { SetItemStatus } from '../../../store/ducks/itemStatus';
 import { ItemStatus } from '../../../enums/ItemStatus.enum';
 import { SetFeature, getFeature } from '../../../store/ducks/feature';
 import { Feature } from '../../../enums/feature.enum';
+import { signOut } from '../../../services/AuthService';
+import { clearStorageData } from '../../../utility/auth.utility';
+import { useNavigate } from 'react-router-dom';
 
 const MenuBar: FC = () => {
   const dispatch = useDispatch();
   const feature = useSelector(getFeature);
+  const navigate = useNavigate();
   let headerTag = '';
   switch (feature) {
     case Feature.items:
@@ -58,8 +62,12 @@ const MenuBar: FC = () => {
     handleClose();
   };
 
-  const handleLogoutButtonClick = () => {
-    console.log('logout-button-click');
+  const handleLogoutButtonClick = async () => {
+    const signOutResponse = await signOut();
+    if (signOutResponse.success) {
+      clearStorageData();
+      navigate('/login');
+    }
     handleClose();
   };
 
@@ -76,14 +84,6 @@ const MenuBar: FC = () => {
             sx={{ mr: 2 }}>
             <HomeIcon />
           </IconButton>
-          {/* <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="mail"
-            sx={{ mr: 2 }}>
-            <MailIcon />
-          </IconButton> */}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {headerTag}
           </Typography>
