@@ -1,19 +1,20 @@
 import { FC, memo } from 'react';
-import { makeStyles } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import { ItemActionButton } from '../ItemActionButton';
+import { useSelector } from 'react-redux';
+import { getItemStatus } from '../../../store/ducks/itemStatus';
+import { ItemStatus } from '../../../enums/ItemStatus.enum';
 export interface ItemListProps {
   items: any[];
 }
 
 const ItemList: FC<ItemListProps> = (props: ItemListProps) => {
+  const itemStatus = useSelector(getItemStatus);
   const { items } = props;
   return (
     <TableContainer>
@@ -21,8 +22,11 @@ const ItemList: FC<ItemListProps> = (props: ItemListProps) => {
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
+            <TableCell align="right">Duration(hour)</TableCell>
             <TableCell align="right">Starting Price</TableCell>
-            <TableCell align="right">Time Window(hour)</TableCell>
+            <TableCell align="right">
+              {itemStatus === ItemStatus.ongoing ? 'Current Height Bid' : ''}
+            </TableCell>
             <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
@@ -34,8 +38,13 @@ const ItemList: FC<ItemListProps> = (props: ItemListProps) => {
               <TableCell component="th" scope="row">
                 {item.name}
               </TableCell>
-              <TableCell align="right">{item.startingPrice}</TableCell>
               <TableCell align="right">{item.duration}</TableCell>
+              <TableCell align="right">{item.startingPrice}</TableCell>
+              <TableCell align="right">
+                {itemStatus === ItemStatus.ongoing
+                  ? item.currentHighestBid
+                  : ''}
+              </TableCell>
               <TableCell align="right">
                 <ItemActionButton item={item} />
               </TableCell>

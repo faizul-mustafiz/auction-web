@@ -77,7 +77,13 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
       setShouldShowAlert(true);
       setIsSuccessResponse(bidItemResponse.success);
       setResponseMessage(bidItemResponse.message);
-      setShouldShowBidDialog(false);
+      if (bidItemResponse.success) {
+        handleBidDialogClose();
+      }
+      const searchItemResponse = await searchItem(itemStatus);
+      if (searchItemResponse) {
+        dispatch(setItems(searchItemResponse.result.items));
+      }
     }
   };
   /**
@@ -103,6 +109,7 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
   };
   const handleBidDialogClose = () => {
     setShouldShowBidDialog(false);
+    setBid('');
   };
   const handleBidChange = (value: string) => {
     setBid(value);
@@ -141,8 +148,12 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
     <Dialog fullWidth open={shouldShowBidDialog} onClose={handleBidDialogClose}>
       <DialogTitle sx={{ fontSize: 32 }}>{item.name}</DialogTitle>
       <DialogContent>
-        <DialogContentText sx={{ paddingBottom: 2 }}>
-          Starting Price: {item.startingPrice}$
+        Bidding amount should be greater then <b>Current Height Bid</b> and{' '}
+        <b>Starting Price</b>. If <b>Current Height Bid</b> is <b>0</b> then no
+        one has placed Bid on this item
+        <DialogContentText sx={{ paddingBottom: 4, paddingTop: 3 }}>
+          Current Height Bid: <b>{item.currentHighestBid}$</b> | Starting Price:{' '}
+          <b>{item.startingPrice}$</b>
         </DialogContentText>
         <TextField
           autoFocus
@@ -158,7 +169,10 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleBidDialogClose}>Cancel</Button>
-        <Button disabled={!isEnabled} onClick={handleBidButtonClick}>
+        <Button
+          disabled={!isEnabled}
+          onClick={handleBidButtonClick}
+          variant="contained">
           Submit
         </Button>
       </DialogActions>
