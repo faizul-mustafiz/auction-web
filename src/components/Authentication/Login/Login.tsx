@@ -9,6 +9,7 @@ import {
   InputLabel,
   OutlinedInput,
   Snackbar,
+  Stack,
   Typography,
 } from '@mui/material';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
@@ -24,7 +25,6 @@ import {
   setUserId,
 } from '../../../utility/auth.utility';
 import { setRefreshToken } from '../../../utility/auth.utility';
-import { useDispatch } from 'react-redux';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -35,7 +35,6 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
 const Login: FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -80,6 +79,9 @@ const Login: FC = () => {
       setShouldShowAlert(true);
       setResponseMessage(signInResponse.message);
     }
+  };
+  const handleSignUpClick = () => {
+    navigate('/register');
   };
   /**
    * * Response success and error response alert related methods
@@ -161,13 +163,21 @@ const Login: FC = () => {
                   </FormControl>
                 </Grid>
                 <Grid item>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={!isEnabled}
-                    onClick={handleSignInClick}>
-                    Sign In
-                  </Button>
+                  <Stack spacing={1} direction="column">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled={!isEnabled}
+                      onClick={handleSignInClick}>
+                      Sign In
+                    </Button>
+                    <Typography variant="h6" align="center">
+                      OR
+                    </Typography>
+                    <Button variant="outlined" onClick={handleSignUpClick}>
+                      Sign Up
+                    </Button>
+                  </Stack>
                 </Grid>
               </Grid>
             </CardContent>

@@ -9,6 +9,7 @@ import {
   InputLabel,
   OutlinedInput,
   Snackbar,
+  Stack,
   Typography,
 } from '@mui/material';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
@@ -24,8 +25,6 @@ import {
   setUserId,
 } from '../../../utility/auth.utility';
 import { setRefreshToken } from '../../../utility/auth.utility';
-import { useDispatch } from 'react-redux';
-import { setUser } from '../../../store/ducks/user';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -36,7 +35,6 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
 const Registration: FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -60,7 +58,7 @@ const Registration: FC = () => {
     setPassword(value);
   };
   const isEnabled = (email.length > 0 && password.length > 0) || false;
-  const handleSignInClick = async () => {
+  const handleSignUpClick = async () => {
     const signUpRequestBody = {
       email: email,
       password: password,
@@ -81,6 +79,9 @@ const Registration: FC = () => {
       setShouldShowAlert(true);
       setResponseMessage(signUpResponse.message);
     }
+  };
+  const handleSignInClick = () => {
+    navigate('/login');
   };
   /**
    * * Response success and error response alert related methods
@@ -160,13 +161,21 @@ const Registration: FC = () => {
                   </FormControl>
                 </Grid>
                 <Grid item>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={!isEnabled}
-                    onClick={handleSignInClick}>
-                    Sign Up
-                  </Button>
+                  <Stack spacing={1} direction="column">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled={!isEnabled}
+                      onClick={handleSignUpClick}>
+                      Sign Up
+                    </Button>
+                    <Typography variant="h6" align="center">
+                      OR
+                    </Typography>
+                    <Button variant="outlined" onClick={handleSignInClick}>
+                      Sign In
+                    </Button>
+                  </Stack>
                 </Grid>
               </Grid>
             </CardContent>
