@@ -11,6 +11,7 @@ export default function Item() {
   const dispatch = useDispatch();
   useEffect(() => {
     if (itemStatus === ItemStatus.draft) {
+      dispatch(setItems([]));
       RequestInterceptor.get(`/items/search?status=${ItemStatus.draft}`).then(
         (response: any) => {
           if (response) {
@@ -19,6 +20,7 @@ export default function Item() {
         },
       );
     } else if (itemStatus === ItemStatus.ongoing) {
+      dispatch(setItems([]));
       RequestInterceptor.get(`/items/search?status=${ItemStatus.ongoing}`).then(
         (response: any) => {
           if (response) {
@@ -28,6 +30,7 @@ export default function Item() {
         },
       );
     } else if (itemStatus === ItemStatus.completed) {
+      dispatch(setItems([]));
       RequestInterceptor.get(
         `/items/search?status=${ItemStatus.completed}`,
       ).then((response: any) => {
