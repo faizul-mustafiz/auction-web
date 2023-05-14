@@ -71,7 +71,6 @@ const ItemActionButton: FC<ItemProps> = (props: ItemProps) => {
       id: item._id,
       bid: Number(bid),
     };
-    console.log('handleBidButtonClick', item);
     const bidItemResponse = await bidItem(bidItemPayload);
     if (bidItemResponse) {
       setShouldShowAlert(true);
