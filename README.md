@@ -94,3 +94,27 @@ npm run build-prod
 All the build commands are listed in `package.json`
 
 **NOTE**: This web application has dependency on `auction-service` so you need to deploy/run auction service first then deploy/run `auction-web`
+
+## Docker Deployment
+
+To deploy auction-web using docker you need to build the image first.
+
+### Build
+
+```
+docker build --build-arg ENVIRONMENT=<environment_name> -t auction-web:<tag_name> .
+```
+
+then when the build is compete then use this command to run the container.
+
+### Run
+
+```
+docker run -dp 3000:80 --restart unless-stopped --name auction-web auction-web:<tag_name>
+```
+
+We need to pass `ENVIRONMENT` value as build argument `--build-arg` in the run command. The environments are
+
+- dev
+- stage
+- prod
